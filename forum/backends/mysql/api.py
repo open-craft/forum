@@ -1881,9 +1881,11 @@ class MySQLBackend(AbstractBackend):
         return {"course_id": course_id}
 
     @staticmethod
-    def get_filtered_threads(query: dict[str, Any]) -> list[dict[str, Any]]:
+    def get_filtered_threads(query: dict[str, Any], ids_only: bool = False) -> list[dict[str, Any]]:
         """Return a list of threads that match the given filter."""
         threads = CommentThread.objects.filter(**query)
+        if ids_only:
+            return [{"_id": str(thread.pk)} for thread in threads]
         return [thread.to_dict() for thread in threads]
 
     @staticmethod
