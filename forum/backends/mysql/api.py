@@ -1107,12 +1107,10 @@ class MySQLBackend(AbstractBackend):
         forum_user = ForumUser.objects.get(user__pk=user_id)
         if params is None:
             params = {}
-
-        user_data = forum_user.to_dict()
         hash_data = {}
-        hash_data["username"] = user_data["username"]
-        hash_data["external_id"] = user_data["external_id"]
-        hash_data["id"] = user_data["external_id"]
+        hash_data["username"] = forum_user.user.username
+        hash_data["external_id"] = forum_user.user.pk
+        hash_data["id"] = forum_user.user.pk
 
         if params.get("complete"):
             subscribed_thread_ids = cls.find_subscribed_threads(user_id)
@@ -1127,7 +1125,7 @@ class MySQLBackend(AbstractBackend):
                     "id": user_id,
                     "upvoted_ids": upvoted_ids,
                     "downvoted_ids": downvoted_ids,
-                    "default_sort_key": user_data["default_sort_key"],
+                    "default_sort_key": forum_user.default_sort_key,
                 }
             )
 
