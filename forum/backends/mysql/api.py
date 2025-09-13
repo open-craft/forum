@@ -1094,13 +1094,7 @@ class MySQLBackend(AbstractBackend):
     @staticmethod
     def filter_standalone_threads(comment_ids: list[str]) -> list[str]:
         """Filter out standalone threads from the list of threads."""
-        comments = Comment.objects.filter(pk__in=comment_ids)
-        filtered_threads = [
-            comment.comment_thread
-            for comment in comments
-            if comment.comment_thread.context != "standalone"
-        ]
-        return [str(thread.pk) for thread in filtered_threads]
+        return list(CommentThread.objects.filter(comment__pk__in=comment_ids).exclude(context="standalone").values_list('pk', flat=True))
 
     @classmethod
     def user_to_hash(
