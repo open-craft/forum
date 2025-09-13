@@ -1667,10 +1667,13 @@ class MySQLBackend(AbstractBackend):
         raise ValueError("Comment doesn't have the thread.")
 
     @staticmethod
-    def get_user(user_id: str) -> dict[str, Any] | None:
+    def get_user(user_id: str, get_full_dict: bool = True) -> dict[str, Any] | None:
         """Return user from user_id."""
         try:
-            return ForumUser.objects.get(user__pk=int(user_id)).to_dict()
+            forum_user = ForumUser.objects.get(user__pk=int(user_id))
+            if get_full_dict:
+                return forum_user.to_dict()
+            return forum_user.__dict__
         except ObjectDoesNotExist:
             return None
 
